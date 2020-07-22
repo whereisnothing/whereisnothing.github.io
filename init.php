@@ -10,9 +10,14 @@ header('Content-Type: text/html; charset=UTF-8');
 
 define('EMLOG_ROOT', dirname(__FILE__));
 
+if (extension_loaded('mbstring')) {
+	mb_internal_encoding('UTF-8');
+}
+
 require_once EMLOG_ROOT.'/config.php';
 require_once EMLOG_ROOT.'/include/lib/function.base.php';
 
+spl_autoload_register("emAutoload");
 doStripslashes();
 
 $CACHE = Cache::getInstance();
@@ -20,6 +25,9 @@ $CACHE = Cache::getInstance();
 $userData = array();
 
 define('ISLOGIN',	LoginAuth::isLogin());
+
+//站点时区
+date_default_timezone_set(Option::get('timezone'));
 
 //用户组:admin管理员, writer联合撰写人, visitor访客
 define('ROLE_ADMIN', 'admin');
@@ -36,7 +44,7 @@ define('TPLS_URL', BLOG_URL.'content/templates/');
 //模板库路径
 define('TPLS_PATH', EMLOG_ROOT.'/content/templates/');
 //解决前台多域名ajax跨域
-define('DYNAMIC_BLOGURL', getBlogUrl());
+define('DYNAMIC_BLOGURL', Option::get("blogurl"));
 //前台模板URL
 define('TEMPLATE_URL', 	TPLS_URL.Option::get('nonce_templet').'/');
 
